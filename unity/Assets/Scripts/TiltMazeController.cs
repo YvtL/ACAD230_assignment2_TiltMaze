@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.IO.Ports;
 
 public class TiltMazeController : MonoBehaviour
 {
@@ -17,7 +16,7 @@ public class TiltMazeController : MonoBehaviour
     {
         //get input from keys for testing purposes
         //later will be replaced by arduino input
-        float tiltX = Input.GetAxis("Horizontal")*tiltSpeed*Time.deltaTime;
+        float tiltX = Input.GetAxis("Horizontal")*tiltSpeed*Time.deltaTime;//Change to GetKey() and if statements
         float tiltZ = Input.GetAxis("Vertical")*tiltSpeed*Time.deltaTime;
 
         //apply rotation
