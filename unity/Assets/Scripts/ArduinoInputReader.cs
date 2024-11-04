@@ -1,53 +1,53 @@
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 using System.IO.Ports;
 
-public class ArduinoInputReader : MonoBehaviour
+public class ArduinoTiltController : MonoBehaviour
 {
-    SerialPort serialPort = new SerialPort("COM3",9600);
-    public float tiltSpeed = 20f;
-    // Start is called before the first frame update
+    SerialPort serialPort = new SerialPort("COM4", 115200); // Replace "COM3" with your actual port if different
+    public float tiltSpeed = 30f; // Speed of tilting
+
     void Start()
     {
-        serialPort.Open();  // Open the serial port
+        serialPort.Open();  // Open the serial port to start reading data
     }
 
-    // Update is called once per frame
     void Update()
     {
-
         if (serialPort.IsOpen)
         {
             try
             {
-                string data = serialPort.ReadLine();
-                string[] values = data.Split(',');
+                string data = serialPort.ReadLine();  // Read a line of data from the serial port
+                string[] values = data.Split(' ');   // Split the data by spaces to get the four values
 
-                if (values.Length == 2)
+                if (values.Length == 4)
                 {
-                    int tiltLeftRight = int.Parse(values[0]);
-                    int tiltForward = int.Parse(values[1]);
+                    int X = int.Parse(values[0]);       // Read the X tilt sensor value (1 or 0)
+                    int NegX = int.Parse(values[1]);    // Read the -X tilt sensor value (1 or 0)
+                    int Y = int.Parse(values[2]);       // Read the Y tilt sensor value (1 or 0)
+                    int NegY = int.Parse(values[3]);    // Read the -Y tilt sensor value (1 or 0)
 
-                    // Map the sensor readings to tilt controls in Unity
-                    float tiltX = tiltLeftRight == 1 ? tiltSpeed * Time.deltaTime : 0;  // Tilt on X-axis
-                    float tiltZ = tiltForward == 1 ? tiltSpeed * Time.deltaTime : 0;    // Tilt on Z-axis
+                    // Calculate tilt based on sensor values
+                    float tiltX = (X == 1 ? tiltSpeed * Time.deltaTime : 0) - (NegX == 1 ? tiltSpeed * Time.deltaTime : 0);
+                    float tiltZ = (Y == 1 ? tiltSpeed * Time.deltaTime : 0) - (NegY == 1 ? tiltSpeed * Time.deltaTime : 0);
 
-                    // Rotate the maze based on Arduino input
-                    GameObject mazePivot = GameObject.Find("MazePivot");
-                    mazePivot.transform.Rotate(tiltX, 0, tiltZ);
+                    // Apply the calculated tilt to the maze pivot
+                    transform.Rotate(tiltX, 0, tiltZ);
                 }
             }
-            catch (System.Exception)
+            catch (System.Exception ex)
             {
-                // Handle any exceptions from parsing
+                Debug.LogWarning("Failed to read data from Arduino: " + ex.Message);
             }
         }
     }
 
     private void OnApplicationQuit()
     {
-        serialPort.Close();  // Close the serial port when quitting the application
+        if (serialPort.IsOpen)
+        {
+            serialPort.Close();  // Close the serial port when quitting the application
+        }
     }
-        
 }
