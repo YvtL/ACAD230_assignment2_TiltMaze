@@ -4,7 +4,7 @@ using System.IO.Ports;
 
 public class ArduinoTiltController : MonoBehaviour
 {
-    SerialPort serialPort = new SerialPort("COM4", 115200); // Replace "COM3" with your actual port if different
+    SerialPort serialPort = new SerialPort("COM4", 115200); // "COM4" 
     public float tiltSpeed = 30f; // Speed of tilting
 
     void Start()

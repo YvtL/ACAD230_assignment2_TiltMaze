@@ -3,7 +3,7 @@ using System.IO.Ports;
 
 public class ArduinoIO : MonoBehaviour
 {
-    const string portName = "/dev/cu.usbmodem21031";
+    const string portName = "COM4"; // "/dev/cu.usbmodem11301";
     const int baudRate = 115200;
     SerialPort stream;
     bool portOpen = false;
