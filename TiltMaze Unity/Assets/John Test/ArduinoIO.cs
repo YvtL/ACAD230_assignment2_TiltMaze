@@ -3,7 +3,7 @@ using System.IO.Ports;
 
 public class ArduinoIO : MonoBehaviour
 {
-    const string portName = "COM4"; // "/dev/cu.usbmodem11301";
+    const string portName = "COM4"; // Set this to your correct port
     const int baudRate = 115200;
     SerialPort stream;
     bool portOpen = false;
@@ -20,46 +20,27 @@ public class ArduinoIO : MonoBehaviour
         catch (System.Exception e)
         {
             ClosePort();
-            print(e);
+            Debug.LogError("Could not open port: " + e.Message);
         }
     }
-
-    public void SendString(string message)
-    {
-        if (portOpen)
-        {
-            stream.WriteLine(message);
-            stream.BaseStream.Flush();
-        }
-        else
-        {
-            print("port not open");
-        }
-    }
-
-    public void SendByte(byte[] message)
-    {
-        if (portOpen)
-        {
-            stream.Write(message, 0, message.Length);
-            stream.BaseStream.Flush();
-        }
-        else
-        {
-            print("port not open");
-        }
-    }
-
 
     public string Receive()
     {
         if (portOpen)
         {
-            return stream.ReadLine();
+            try
+            {
+                return stream.ReadLine();
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogWarning("Failed to read data: " + e.Message);
+                return "";
+            }
         }
         else
         {
-            print("port not open");
+            Debug.LogWarning("Port not open");
             return "";
         }
     }
@@ -71,8 +52,11 @@ public class ArduinoIO : MonoBehaviour
 
     public void ClosePort()
     {
-        portOpen = true;
-        stream.Close();
-        print("Port closed");
+        if (portOpen)
+        {
+            portOpen = false;
+            stream.Close();
+            Debug.Log("Port closed");
+        }
     }
 }

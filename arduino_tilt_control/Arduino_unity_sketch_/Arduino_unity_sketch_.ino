@@ -11,7 +11,7 @@ void setup() {
   pinMode(tiltNegY, INPUT);
 
   // Start serial communication to send data to Unity
-  Serial.begin(115200);
+  Serial.begin(2000000);
 }
 
 void loop() {
@@ -22,11 +22,34 @@ void loop() {
   int NegY = digitalRead(tiltNegY); // Read the -Y tilt sensor
 
   // Send data to Unity in a formatted string (X, NegX, Y, NegY)
-  Serial.print(X); 
-  Serial.print(NegX); 
-  Serial.print(Y);
-  Serial.println(NegY);
+  //change to if statemnet to be either -1 0 1
+  if (X == 1)
+  {
+    Serial.print(2);
+  }
+  else if(NegX == 1)
+  {
+     Serial.print(0);
+  }
+  else
+  {
+      Serial.print(1);
+  }
+
+  if (Y == 1)
+  {
+    Serial.println(2);
+  }
+  else if(NegY == 1)
+  {
+     Serial.println(0);
+  }
+  else
+  {
+      Serial.println(1);
+  }
+
 
   // Add a small delay to control data transmission speed
-  delay(1);
+  delay (0);
 }
